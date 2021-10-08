@@ -1,76 +1,90 @@
 <?php
 
-//получить остаток деления 7 на 3
+$arr=[1,2,3,7,31,4,1,8,6];
+// посчитать длину массива
+echo count($arr)."<br />";
 
-echo (7 % 3)."<br />";
+// переместить первые 4 элемента массива в конец массива
+for($i=1; $i<=4; $i++)
+array_push($arr,array_shift($arr));
+print_r($arr);
+echo "<br />";
 
-// Вывести целую часть сложения 7 и 7.15
+// получить сумму 4,5,6 элементов
+echo $arr[3]+$arr[4]+$arr[5]."<br />";
 
-echo (integer) (7+7.15)."<br />";
+//-------------------------------------------------------------------------------//
 
-// Получить корень из 25
+$firstArr=[
+    'one'=>1,
+    'two'=>2,
+    'three'=>3,
+    'four'=>5,
+    'five'=>12,
+    ];
 
-echo sqrt(25)."<br />";
+$secondArr=[
+    'one' => 1,
+    'seven' => 22,
+    'three' => 32,
+    'four' => 5,
+    'five' => 13,
+    'six' => 37,
+    ];
 
-// Получить 4-е слово из фразы - "Десять негритят пошли купаться в море"
+//найти все элементы которые отсутствуют в первом массиве и присутствуют во втором
+print_r(array_diff_key($secondArr, $firstArr));
+echo "<br/>";
 
-$stringArr = explode($separator=" ", "Десять негритят пошли купаться в море");
-echo $stringArr[3],"<br />";
+//найти все элементы которые присутствую в первом и отсутствуют во втором
+print_r(array_diff_key($firstArr,$secondArr));
+echo "<br/>";
 
-// Получить 17-й символ из фразы - "Десять негритят пошли купаться в море"
+//найти все элементы значения которых совпадают
+print_r(array_uintersect($firstArr, $secondArr, "strcasecmp"));
+echo "<br/>";
 
-echo mb_substr('Десять негритят пошли купаться в море', 16,1)."<br />";
+//найти все элементы значения которых отличаются
+print_r(array_udiff($firstArr, $secondArr, "strcasecmp"));
+echo "<br/>";
 
-// Сделать заглавной первую букву во всех словах фразы - Десять негритят пошли купаться в море
-// Первая попытка была через ucwords, но как оказалось - он не работает с русским(только с однобайтовыми)
+$bigArr = [
+    'one' => 1,
+    'two' => [
+        'one' => 1,
+        'seven' => 22,
+        'three' => 32,
+    ],
+    'three' => [
+        'one' => 1,
+        'two' => 2,
+    ],
+    'four' => 5,
+    'five' => [
+        'three' => 32,
+        'four' => 5,
+        'five' => 12,
+    ],
 
-echo $phrase = mb_convert_case('Десять негритят пошли купаться в море', MB_CASE_TITLE, "UTF-8")."<br />";
+];
 
-// Посчитать длину строки - Десять негритят пошли купаться в море
+//получить сумму всех значений в массиве
+$sum = 0;
+array_walk_recursive($bigArr, function($number) use (&$sum) {
+    $sum += $number;
+});
+echo $sum."<br />";
 
-echo mb_strlen('Десять негритят пошли купаться в море')."<br />";
+//получить общее количество элементов в массиве
+echo count($bigArr, COUNT_RECURSIVE)."<br />";
 
-//  Правильно ли утверждение что true = 1
+//получить все вторые элементы вложенных массивов
+$secondElements = [];
+foreach ($bigArr as $key => $value) {
+    if (is_array($value) && count($value) > 1) {
+        $secondElements[] = array_values($value)[1];
+    }
+}
 
-$containTrue=true;
-$containOne=1;
-
-if($containOne==$containTrue)
-    echo 'True is equal to 1'."<br />";
-else
-    echo 'True is not equal to 1'."<br />";
-
-//Правильно ли утверждение false тождественно 0
-
-$containTrue=false;
-$containOne=0;
-
-if($containOne===$containTrue)
-    echo 'False is identical to 0'."<br />";
-else
-    echo 'False is not identical to 0'."<br />";
-
-// Какая строка длиннее: "three" или "три"
-
-$ruString='три';
-$enString='three';
-$ruStringLength=mb_strlen($ruString);
-$enStringLength=mb_strlen($enString);
-If ($ruStringLength==$enStringLength)
-    echo'"three" is equal to "три"'."<br />";
-elseif ($ruStringLength<$enStringLength)
-    echo'"three" is longer than "три"'."<br />";
-elseif ($ruStringLength>$enStringLength)
-    echo'"три" is longer than "three"'."<br />";
-
-//Какое число больше 125 умножить на 13 плюс 7 или 223 плюс 28 умножить 2
-
-$a=125*13+7;
-$b=223+28*2;
-If ($a==$b)
-    echo "$a is equal to $b."."<br />";
-elseif ($a<$b)
-    echo "$b is bigger than $a."."<br />";
-elseif ($a>$b)
-    echo "$a is bigger $b."."<br />";
+print_r($secondElements);
 
