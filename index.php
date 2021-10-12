@@ -1,58 +1,12 @@
 <?php
 
-$arr=[1,2,3,7,31,4,1,8,6];
-// посчитать длину массива
-echo count($arr)."<br />";
-
-// переместить первые 4 элемента массива в конец массива
-for($i=1; $i<=4; $i++)
-array_push($arr,array_shift($arr));
-print_r($arr);
-echo "<br />";
-
-// получить сумму 4,5,6 элементов
-echo $arr[3]+$arr[4]+$arr[5]."<br />";
-
-//-------------------------------------------------------------------------------//
-
-$firstArr=[
-    'one'=>1,
-    'two'=>2,
-    'three'=>3,
-    'four'=>5,
-    'five'=>12,
-    ];
-
-$secondArr=[
-    'one' => 1,
-    'seven' => 22,
-    'three' => 32,
-    'four' => 5,
-    'five' => 13,
-    'six' => 37,
-    ];
-
-//найти все элементы которые отсутствуют в первом массиве и присутствуют во втором
-print_r(array_diff_key($secondArr, $firstArr));
-echo "<br/>";
-
-//найти все элементы которые присутствую в первом и отсутствуют во втором
-print_r(array_diff_key($firstArr,$secondArr));
-echo "<br/>";
-
-//найти все элементы значения которых совпадают
-print_r(array_uintersect($firstArr, $secondArr, "strcasecmp"));
-echo "<br/>";
-
-//найти все элементы значения которых отличаются
-print_r(array_udiff($firstArr, $secondArr, "strcasecmp"));
-echo "<br/>";
+//Создать функцию принимающую массив произвольной вложенности и определяющий любой элемент номер которого передан
+// параметром во всех вложенных массивах.
 
 $bigArr = [
     'one' => 1,
     'two' => [
-        'one' => 1,
-        'seven' => 22,
+        'one' => 1, 'seven' => 22,
         'three' => 32,
     ],
     'three' => [
@@ -64,27 +18,73 @@ $bigArr = [
         'three' => 32,
         'four' => 5,
         'five' => 12,
+        'six' => [
+            'one'=> 101,
+            'ten'=> 421,
+            'nine'=>[1,4,6,1,88]
+        ]
     ],
-
 ];
 
-//получить сумму всех значений в массиве
-$sum = 0;
-array_walk_recursive($bigArr, function($number) use (&$sum) {
-    $sum += $number;
-});
-echo $sum."<br />";
+function displayElementsByNumber($array,$index)
+{
+    $result =[];
 
-//получить общее количество элементов в массиве
-echo count($bigArr, COUNT_RECURSIVE)."<br />";
+    if(count($array) >= $index + 1){
+        $result[] = array_values($array)[$index];
+    }
 
-//получить все вторые элементы вложенных массивов
-$secondElements = [];
-foreach ($bigArr as $key => $value) {
-    if (is_array($value) && count($value) > 1) {
-        $secondElements[] = array_values($value)[1];
+    foreach ($array as $item) {
+        if(is_array($item)){
+            $result = array_merge($result,displayElementsByNumber($item,$index));
+        }
+    }
+    return $result;
+}
+echo '<pre>';
+echo print_r(displayElementsByNumber($bigArr,2));
+
+//Создать функцию которая считает все буквы b в переданной строке,
+//в случае если передается не строка функция должна возвращать false
+
+$phrase='Snail Bob can eat a lot of beans';
+$invalidPhrase=25;
+function countB($string)
+{
+    if (is_string($string)) {
+        return substr_count(strtolower($string), 'b');
+    } else {
+        echo '<pre>'.'Input is invaid';
+        return false;
     }
 }
 
-print_r($secondElements);
+echo '<pre>'.countB($phrase);
+echo '<pre>'.countB($invalidPhrase);
 
+//Создать функцию которая считает сумму значений всех элементов массива произвольной глубины
+function countSum($array)
+{
+    $result=0;
+    $result = $result + array_sum($array);
+
+    foreach ($array as $item) {
+        if(is_array($item)){
+            $result= $result + countSum($item);
+        }
+    }
+    return $result;
+}
+
+echo countSum($bigArr);
+
+//Создать функцию которая определит сколько квадратов меньшего
+//размера можно вписать в квадрат большего размера размер возвращать в float
+
+function howMuchSquaresFit($bigOne,$littleOne)
+{
+    $bigOneArea=pow($bigOne,2);
+    $littleOneArea=pow($littleOne,2);
+    return $bigOneArea/$littleOneArea;
+}
+echo '<pre>'.howMuchSquaresFit(7,3);
